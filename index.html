@@ -19,7 +19,7 @@
         body {
             background-color: #0b0c10;
             background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),\
                 linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 40px 40px;
             color: #ffffff;
@@ -293,31 +293,84 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* CUSTOM MODAL NOTIFICATION */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        /* ── MODAL BANNER FOTO UTUH MURNI ── */
+        .modal-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0, 0, 0, 0.8); 
+            backdrop-filter: blur(5px); 
+            z-index: 1000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 0.3s ease; 
+        }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-box { background: #111217; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 25px; width: 100%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transform: translateY(-20px); transition: transform 0.3s ease; text-align: center; }
-        .modal-overlay.active .modal-box { transform: translateY(0); }
+        
+        .modal-box { 
+            position: relative;
+            background: transparent; 
+            width: 100%; 
+            max-width: 400px; 
+            margin: 0 20px;
+            transform: scale(0.9); 
+            transition: transform 0.3s ease; 
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+
+        /* Style Foto Popup */
+        .modal-banner-img {
+            width: 100%;
+            height: auto;
+            border-radius: 24px;
+            display: block;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+        }
+
+        /* Tombol Silang Bulat di Kanan Atas Foto */
+        .btn-close-banner {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            z-index: 1010;
+        }
+        .btn-close-banner:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* ── MODAL DEFAULT DIBAWAKAN KEMBALI HANYA UNTUK NOTIF TRANSAKSI ── */
+        .system-modal-box {
+            background: #111217; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 16px; 
+            padding: 25px; 
+            width: 100%; 
+            max-width: 450px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); 
+            text-align: center;
+        }
         .modal-icon { font-size: 40px; margin-bottom: 15px; }
         .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
         .modal-desc { font-size: 13px; color: #a0a5b5; line-height: 1.6; margin-bottom: 20px; white-space: pre-line; text-align: left; background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.03); }
-        .modal-actions { display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: wrap; }
-        
-        /* TOMBOL PLATFORM DI DALAM MODAL */
-        .btn-modal-platform { display: flex; align-items: center; justify-content: center; gap: 10px; flex: 1; min-width: 150px; padding: 12px; color: #fff; font-size: 12px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; transition: 0.2s; }
-        .btn-modal-dc { background: #5865F2; }
-        .btn-modal-dc:hover { background: #4752C4; }
-        .btn-modal-wa { background: #25D366; color: #fff; }
-        .btn-modal-wa:hover { background: #1ebd59; }
-
-        /* STYLING LOGO KECIL DI TOMBOL MODAL */
-        .btn-modal-platform img {
-            width: 18px;
-            height: 18px;
-            border-radius: 4px;
-            object-fit: cover;
-        }
-
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
         .btn-modal-confirm { background: #2ecc71; color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
         .btn-modal-close { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
 
@@ -334,12 +387,7 @@
 </div>
 
 <div id="nexus-modal" class="modal-overlay">
-    <div class="modal-box">
-        <div id="modal-icon" class="modal-icon">⚠️</div>
-        <div id="modal-title" class="modal-title" style="text-align: center;">Judul Notifikasi</div>
-        <div id="modal-desc" class="modal-desc">Pesan deskripsi.</div>
-        <div id="modal-actions" class="modal-actions"></div>
-    </div>
+    <div id="modal-content" class="modal-box"></div>
 </div>
 
 <div id="alert-banner" class="alert-banner">
@@ -385,7 +433,7 @@
                         <div style="font-size: 11px; color: #8a8d98;">NodeJS Multi-device</div>
                     </div>
                 </div>
-                <button class="btn-deploy" onclick="showModal('🤖 BOT WHATSAPP', 'Layanan Bot WhatsApp terpilih! Pengaturan otomatis akan dilanjutkan lewat WhatsApp API Panel.', 'info')">Click</button>
+                <button class="btn-deploy" onclick="showSystemModal('🤖 BOT WHATSAPP', 'Layanan Bot WhatsApp terpilih! Pengaturan otomatis akan dilanjutkan lewat WhatsApp API Panel.', 'info')">Click</button>
             </div>
 
             <div class="item-card">
@@ -453,7 +501,6 @@
             <button id="btn-private" class="tab-btn" onclick="togglePriceCategory('private')">Private Hosting / VPS ⭐</button>
         </div>
 
-        <!-- 🟢 SHARED HOSTING VIEW -->
         <div id="shared-grid" class="pricing-grid">
             <div class="package-card">
                 <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
@@ -546,7 +593,7 @@
                 <div class="pkg-region">SINGAPUR | AMD EPYC</div>
                 <div class="pkg-price">Rp 63.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
                 <ul class="pkg-specs">
-                    <li>RAM: 7 GB Dedicated</li>
+                    <li>RAM: 7 GB</li>
                     <li>CPU: 3 Core</li>
                     <li>Uptime mencapai 99,9%</li>
                     <li>Sistem anti lag & anti overload</li>
@@ -597,7 +644,6 @@
             </div>
         </div>
 
-        <!-- 🔵 PRIVATE HOSTING / VPS VIEW -->
         <div id="private-grid" class="pricing-grid" style="display: none;">
             <div class="package-card" style="border-color: rgba(155, 89, 182, 0.2);">
                 <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
@@ -748,14 +794,46 @@
         return "Rp " + angka.toLocaleString('id-ID');
     }
 
+    // OTOMATIS RUNNING PAS MASUK WEB
     document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('menu-view').style.display = 'block';
         document.getElementById('menu-view').style.opacity = '1';
+        
+        // Memanggil fungsi pembuat popup foto secara otomatis pas masuk web
+        showImagePopup("https://cdn.phototourl.com/free/2026-06-06-b9ecb082-7798-4175-b41c-8258167550b5.png");
     });
 
-    // CUSTOM MODAL CONTROLLER
-    function showModal(title, desc, type, onConfirm = null, showInput = false, isOrderSuccess = false) {
+    // ── FUNGSI UNTUK MERENDER POPUP FOTO BANNER MURNI + SILANG ──
+    function showImagePopup(imgUrl) {
         const modal = document.getElementById('nexus-modal');
+        const mContent = document.getElementById('modal-content');
+        
+        // Reset class utama agar tidak mengikuti style system-modal lama
+        mContent.className = "modal-box"; 
+        
+        // Tulis ulang isi modal murni hanya gambar dan tombol close
+        mContent.innerHTML = `
+            <button class="btn-close-banner" onclick="closeModal()">✕</button>
+            <img src="${imgUrl}" alt="Welcome Banner" class="modal-banner-img">
+        `;
+        
+        modal.classList.add('active');
+    }
+
+    // ── FUNGSI MODAL SYSTEM UNTUK ALUR DIALOG TRANSAKSI SEPERTI BIASA ──
+    function showSystemModal(title, desc, type, onConfirm = null, showInput = false) {
+        const modal = document.getElementById('nexus-modal');
+        const mContent = document.getElementById('modal-content');
+        
+        // Set layout system template lama agar rapi saat transaksi
+        mContent.className = "system-modal-box";
+        mContent.innerHTML = `
+            <div id="modal-icon" class="modal-icon">⚠️</div>
+            <div id="modal-title" class="modal-title" style="text-align: center;"></div>
+            <div id="modal-desc" class="modal-desc"></div>
+            <div id="modal-actions" class="modal-actions"></div>
+        `;
+
         const mIcon = document.getElementById('modal-icon');
         const mTitle = document.getElementById('modal-title');
         const mDesc = document.getElementById('modal-desc');
@@ -767,7 +845,6 @@
 
         mTitle.innerText = title;
         mDesc.innerText = desc;
-        mActions.innerHTML = '';
 
         if (showInput) {
             const inputEmail = document.createElement('input');
@@ -778,27 +855,7 @@
             mDesc.appendChild(inputEmail);
         }
 
-        // KONDISI KHUSUS: MENAMPILKAN TOMBOL DENGAN LOGO GAMBAR ASLI (KECIL)
-        if (isOrderSuccess) {
-            const dcLink = document.createElement('a');
-            dcLink.className = 'btn-modal-platform btn-modal-dc';
-            dcLink.href = 'https://discord.gg/pbd52NFSmS';
-            dcLink.target = '_blank';
-            dcLink.innerHTML = `<img src="https://cdn.phototourl.com/free/2026-06-06-bb952d1a-21cf-457c-8457-37dc660b5574.jpg" alt="DC"> Klaim di Discord`;
-            dcLink.onclick = closeModal;
-
-            const waLink = document.createElement('a');
-            waLink.className = 'btn-modal-platform btn-modal-wa';
-            waLink.href = 'https://wa.me/628976497354';
-            waLink.target = '_blank';
-            waLink.innerHTML = `<img src="https://cdn.phototourl.com/free/2026-06-06-dcd1a19e-9eda-449e-a659-47a49d6e565b.jpg" alt="WA"> Klaim di WhatsApp`;
-            waLink.onclick = closeModal;
-
-            mActions.appendChild(dcLink);
-            mActions.appendChild(waLink);
-        } 
-        // KONDISI FORM INPUT EMAIL
-        else if (onConfirm) {
+        if (onConfirm) {
             const cancelBtn = document.createElement('button');
             cancelBtn.className = 'btn-modal-close';
             cancelBtn.innerText = 'Batal';
@@ -823,13 +880,19 @@
 
             mActions.appendChild(cancelBtn);
             mActions.appendChild(confirmBtn);
-        } 
-        // MODAL INFORMASI UMUM/STANDAR
-        else {
+        } else {
             const okBtn = document.createElement('button');
             okBtn.className = 'btn-modal-confirm';
             okBtn.innerText = 'Mengerti';
-            okBtn.onclick = closeModal;
+            
+            if (type === 'success' && title.includes('ORDER')) {
+                okBtn.onclick = () => {
+                    closeModal();
+                    window.open('https://discord.gg/pbd52NFSmS', '_blank');
+                };
+            } else {
+                okBtn.onclick = closeModal;
+            }
             mActions.appendChild(okBtn);
         }
         modal.classList.add('active');
@@ -880,7 +943,7 @@
 
     // MEMINTA INPUT EMAIL DAN PEMROSESAN ORDER
     function promptOrder(packageName, price) {
-        showModal(
+        showSystemModal(
             'KONFIRMASI PEMBELIAN', 
             `Anda memilih "${packageName}" seharga ${formatRupiah(price)}/bulan.\nUntuk pengiriman invoice otomatis, masukkan alamat email Anda di bawah ini:`, 
             'info', 
@@ -909,7 +972,7 @@
             headers: { 'Accept': 'application/json' }
         }).catch(e => console.log('Email processing complete.'));
 
-        // 2. FORMAT UNTUK DISCORD TICKET USER / WHATSAPP ADMIN
+        // 2. FORMAT UNTUK DISCORD TICKET USER
         const textToCopy = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🛒 ORDER BARU DI KHALGLENS NEXUS 🛒
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -920,32 +983,25 @@
 ● Email Buyer: ${buyerEmail}
 ● Status     : Menunggu Pembuatan Akun Panel
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️ Tolong proses pembuatan akun panel saya melalui platform ini! Terima kasih.`;
+⚠️ Tolong proses pembuatan akun panel saya melalui Ticket ini! Terima kasih.`;
 
         navigator.clipboard.writeText(textToCopy).then(() => {
-            showModal(
+            showSystemModal(
                 '🚀 ORDER BERHASIL & INVOICE DIKIRIM!', 
                 `Pesanan berhasil diproses!\n\n` +
-                `✉️ Struk transaksi telah dikirimkan ke email Anda (${buyerEmail}) dari empressstoreee@gmail.com.\n\n` +
-                `👉 Data invoice order sudah tersalin otomatis ke clipboard ponsel/PC Anda!\n\n` +
-                `Silakan pilih platform komunitas di bawah ini untuk mengirimkan bukti invoice tadi kepada admin:`, 
-                'success',
-                null,
-                false,
-                true
+                `✉️ Pesan ucapan terima kasih otomatis dan struk transaksi telah dikirimkan ke email Anda (${buyerEmail}) dari empressstoreee@gmail.com.\n\n` +
+                `👉 Tekan 'Mengerti' untuk membuka Discord, buat ticket baru, dan klik CTRL+V (Paste) data pesanan yang sudah tersalin otomatis ke admin!`, 
+                'success'
             );
         }).catch(err => {
-            showModal(
+            showSystemModal(
                 '🚀 ORDER BERHASIL!', 
-                `Pesanan dibuat. Email terkirim ke ${buyerEmail}.\n\nGagal menyalin otomatis, silakan salin manual data ini:\n\n${textToCopy}`, 
-                'success',
-                null,
-                false,
-                true
+                `Pesanan dibuat. Email berhasil terkirim ke ${buyerEmail}.\n\nSilakan salin detail transaksi ini secara manual:\n\n${textToCopy}`, 
+                'success'
             );
         });
     }
 </script>
 
 </body>
-</html>
+    </html>
