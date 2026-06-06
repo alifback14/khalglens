@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khalglens Nexus - Minecraft Hosting Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* 1. SETUP & THEME */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #0b0c10;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 40px 20px;
+        }
+
+        /* ANIMASI HUJAN KERANJANG */
+        .bg-decorations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .falling-cart {
+            position: absolute;
+            top: -50px;
+            width: 24px;
+            height: 24px;
+            opacity: 0.12;
+            animation: fallAnimation linear infinite;
+        }
+
+        .falling-cart svg {
+            width: 100%;
+            height: 100%;
+            fill: #ffffff; 
+        }
+
+        @keyframes fallAnimation {
+            0% { top: -50px; transform: translateX(0) rotate(0deg); }
+            50% { transform: translateX(20px) rotate(180deg); }
+            100% { top: 105vh; transform: translateX(-10px) rotate(360deg); }
+        }
+
+        .c1 { left: 5%; animation-duration: 7s; }
+        .c2 { left: 20%; animation-duration: 10s; animation-delay: 2s; }
+        .c3 { left: 40%; animation-duration: 8s; animation-delay: 4s; }
+        .c4 { left: 60%; animation-duration: 11s; animation-delay: 1s; }
+        .c5 { left: 80%; animation-duration: 9s; animation-delay: 5s; }
+        .c6 { left: 95%; animation-duration: 7s; animation-delay: 3s; }
+
+        /* BANNER PERINGATAN */
+        .alert-banner {
+            width: 100%;
+            max-width: 950px;
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.25);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+        }
+
+        .alert-icon { font-size: 20px; animation: flash 2s infinite; }
+        .alert-text { font-size: 13px; color: #f1f2f6; line-height: 1.5; font-weight: 500; }
+        .alert-text strong { color: #e74c3c; font-weight: 700; }
+        .alert-text a { color: #5865F2; text-decoration: none; font-weight: 600; border-bottom: 1px dashed #5865F2; transition: 0.2s; }
+        .alert-text a:hover { color: #7289da; border-bottom-style: solid; }
+
+        @keyframes flash {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; text-shadow: 0 0 8px #e74c3c; }
+        }
+
+        /* LAYOUT CONTAINERS */
+        .main-container {
+            width: 100%;
+            max-width: 950px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card-wrapper {
+            background: rgba(17, 18, 23, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+
+        #pricing-view {
+            display: none;
+            opacity: 0;
+        }
+
+        /* HEADER STYLING */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .brand { display: flex; align-items: center; gap: 15px; }
+        .brand img { width: 50px; height: 50px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.15); object-fit: cover; }
+        .brand-text h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+        .brand-text p { font-size: 13px; color: #8a8d98; }
+
+        /* TAB SUB-MENU */
+        .tab-menu {
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 5px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            width: fit-content;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #8a8d98;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.2);
+        }
+
+        /* GRID UTAMA */
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .item-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .item-card:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.2); transform: translateY(-3px); }
+        .item-info { display: flex; align-items: center; gap: 15px; }
+        .icon-box { width: 52px; height: 52px; background: #1c1f26; border-radius: 10px; overflow: hidden; }
+        .icon-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* BADGE STOK */
+        .stock-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; }
+        .stock-available { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.2); }
+        .stock-empty { background: rgba(231, 76, 60, 0.1); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.2); }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .stock-available .dot { background: #2ecc71; animation: pulse 1.5s infinite; }
+        .stock-empty .dot { background: #e74c3c; animation: pulse-red 1.5s infinite; }
+
+        /* TOMBOL BUTTON */
+        .btn-deploy {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-deploy:hover { background: #fff; color: #000; }
+
+        /* PRICING VIEW */
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 10px; }
+        .package-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .package-card.reveal { opacity: 1; transform: translateY(0); transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s, background-color 0.3s; }
+        .package-card:hover { border-color: #2ecc71; background: rgba(46, 204, 113, 0.03); }
+        
+        /* GAMBAR PRODUK PER PAKET */
+        .pkg-banner {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .pkg-name { font-size: 13px; color: #8a8d98; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+        .pkg-region { font-size: 10px; color: #3498db; font-weight: 600; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .pkg-price { font-size: 20px; font-weight: 700; color: #2ecc71; margin-bottom: 15px; }
+        .pkg-specs { list-style: none; text-align: left; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 12px; width: 100%; }
+        .pkg-specs li { font-size: 12px; margin-bottom: 6px; color: #d1d1d1; display: flex; align-items: center; gap: 6px; }
+        .pkg-specs li::before { content: '•'; color: #2ecc71; }
+
+        .back-btn { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: #8a8d98; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 5px; }
+        .back-btn:hover { color: #fff; border-color: #fff; }
+
+        /* INPUT FIELD DI MODAL */
+        .modal-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #fff;
+            font-size: 13px;
+            margin-top: 10px;
+            outline: none;
+        }
+        .modal-input:focus { border-color: #2ecc71; }
+
+        /* TESTIMONIAL MARQUEE RUNNING */
+        .testimonial-section {
+            margin-top: 35px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 25px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .testimonial-title { font-size: 14px; font-weight: 700; color: #3498db; margin-bottom: 15px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .marquee-wrapper { width: 100%; overflow: hidden; display: flex; }
+        .marquee-track { display: flex; gap: 20px; width: max-content; animation: runningMarquee 25s linear infinite; }
+        .marquee-wrapper:hover .marquee-track { animation-play-state: paused; }
+        
+        .comment-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            width: 290px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .comment-user { display: flex; justify-content: space-between; align-items: center; }
+        .user-meta { display: flex; align-items: center; gap: 8px; }
+        .user-img { width: 28px; height: 28px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #2ecc71; }
+        .user-name { font-size: 12px; font-weight: 600; color: #fff; }
+        .buy-badge { font-size: 9px; padding: 2px 6px; background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.2); color: #2ecc71; border-radius: 4px; font-weight: bold; }
+        .comment-text { font-size: 11px; color: #a0a5b5; font-style: italic; line-height: 1.4; }
+
+        @keyframes runningMarquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* CUSTOM MODAL NOTIFICATION */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box { background: #111217; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 25px; width: 100%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transform: translateY(-20px); transition: transform 0.3s ease; text-align: center; }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .modal-icon { font-size: 40px; margin-bottom: 15px; }
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+        .modal-desc { font-size: 13px; color: #a0a5b5; line-height: 1.6; margin-bottom: 20px; white-space: pre-line; text-align: left; background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.03); }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: wrap; }
+        
+        /* TOMBOL PLATFORM DI DALAM MODAL */
+        .btn-modal-platform { display: flex; align-items: center; justify-content: center; gap: 10px; flex: 1; min-width: 150px; padding: 12px; color: #fff; font-size: 12px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; transition: 0.2s; }
+        .btn-modal-dc { background: #5865F2; }
+        .btn-modal-dc:hover { background: #4752C4; }
+        .btn-modal-wa { background: #25D366; color: #fff; }
+        .btn-modal-wa:hover { background: #1ebd59; }
+
+        /* STYLING LOGO KECIL DI TOMBOL MODAL */
+        .btn-modal-platform img {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .btn-modal-confirm { background: #2ecc71; color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+        .btn-modal-close { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="bg-decorations">
+    <div class="falling-cart c1"><svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+    <div class="falling-cart c2"><svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+    <div class="falling-cart c3"><svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+    <div class="falling-cart c4"><svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+</div>
+
+<div id="nexus-modal" class="modal-overlay">
+    <div class="modal-box">
+        <div id="modal-icon" class="modal-icon">⚠️</div>
+        <div id="modal-title" class="modal-title" style="text-align: center;">Judul Notifikasi</div>
+        <div id="modal-desc" class="modal-desc">Pesan deskripsi.</div>
+        <div id="modal-actions" class="modal-actions"></div>
+    </div>
+</div>
+
+<div id="alert-banner" class="alert-banner">
+    <div class="alert-icon">⚠️</div>
+    <div class="alert-text">
+        <strong>PENTING:</strong> Sebelum melakukan pembelian, mohon untuk 
+        selalu memeriksa ketersediaan stock real-time terlebih dahulu melalui channel 
+        <a href="https://discord.gg/pbd52NFSmS" target="_blank">Discord Khalglens Nexus</a> agar proses integrasi berjalan lancar.
+    </div>
+</div>
+
+<div id="product-container" class="main-container">
+    <div id="menu-view" class="card-wrapper">
+        <div class="header">
+            <div class="brand">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-d62688b7-44cf-40d7-931b-cb9bc681fc44.png" alt="Logo">
+                <div class="brand-text">
+                    <h1>Khalglens Nexus</h1>
+                    <p>Pilih layanan, langsung sesuaikan server Anda.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="item-card">
+                <div class="item-info">
+                    <div class="icon-box"><img src="https://cdn.phototourl.com/free/2026-06-06-b35d36e4-16f4-4102-ab0b-de417fd8f261.jpg" alt="MC"></div>
+                    <div>
+                        <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                        <div style="font-weight: 600;">Minecraft Hosting</div>
+                        <div style="font-size: 11px; color: #8a8d98;">Shared & Private AMD EPYC</div>
+                    </div>
+                </div>
+                <button class="btn-deploy" onclick="switchView('menu-view', 'pricing-view')">Click</button>
+            </div>
+
+            <div class="item-card">
+                <div class="item-info">
+                    <div class="icon-box"><img src="https://cdn.phototourl.com/free/2026-06-06-dcd1a19e-9eda-449e-a659-47a49d6e565b.jpg" alt="WA"></div>
+                    <div>
+                        <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                        <div style="font-weight: 600;">Bot WhatsApp</div>
+                        <div style="font-size: 11px; color: #8a8d98;">NodeJS Multi-device</div>
+                    </div>
+                </div>
+                <button class="btn-deploy" onclick="showModal('🤖 BOT WHATSAPP', 'Layanan Bot WhatsApp terpilih! Pengaturan otomatis akan dilanjutkan lewat WhatsApp API Panel.', 'info')">Click</button>
+            </div>
+
+            <div class="item-card">
+                <div class="item-info">
+                    <div class="icon-box"><img src="https://cdn.phototourl.com/free/2026-06-06-bb952d1a-21cf-457c-8457-37dc660b5574.jpg" alt="DC"></div>
+                    <div>
+                        <div class="stock-badge stock-empty"><span class="dot"></span> No Stock</div>
+                        <div style="font-weight: 600;">Bot Discord</div>
+                        <div style="font-size: 11px; color: #8a8d98;">Discord.js / Eris</div>
+                    </div>
+                </div>
+                <button class="btn-deploy" style="opacity: 0.6; cursor: not-allowed;">Click</button>
+            </div>
+
+            <div class="item-card">
+                <div class="item-info">
+                    <div class="icon-box"><img src="https://cdn.phototourl.com/free/2026-06-06-156f8c0f-f30e-4643-8c84-e866692d930d.jpg" alt="FiveM"></div>
+                    <div>
+                        <div class="stock-badge stock-empty"><span class="dot"></span> No Stock</div>
+                        <div style="font-weight: 600;">FiveM Server</div>
+                        <div style="font-size: 11px; color: #8a8d98;">Roleplay Optimized</div>
+                    </div>
+                </div>
+                <button class="btn-deploy" style="opacity: 0.6; cursor: not-allowed;">Click</button>
+            </div>
+        </div>
+
+        <div class="testimonial-section">
+            <div class="testimonial-title">⭐ Ulasan Pembeli Real-Time</div>
+            <div class="marquee-wrapper">
+                <div class="marquee-track">
+                    <div class="comment-card">
+                        <div class="comment-user"><div class="user-meta"><div class="user-img">A</div><span class="user-name">Adit_Gamer</span></div><span class="buy-badge">Shared 3GB</span></div>
+                        <p class="comment-text">"Gokil sih node AMD EPYC nya ramah banget ga ada delay pas main bersepuluh mas, mantap!"</p>
+                    </div>
+                    <div class="comment-card">
+                        <div class="comment-user"><div class="user-meta"><div class="user-img">R</div><span class="user-name">Rian_Valkyrie</span></div><span class="buy-badge">Private 4GB</span></div>
+                        <p class="comment-text">"Nyobain private hostingnya beneran dapet resource dedicated, TPS anteng di 20.0 seharian."</p>
+                    </div>
+                    <div class="comment-card">
+                        <div class="comment-user"><div class="user-meta"><div class="user-img">M</div><span class="user-name">M_Fahri</span></div><span class="buy-badge">Shared 5GB</span></div>
+                        <p class="comment-text">"Auto-deploy nya cepet banget ga perlu nunggu admin bangun tidur langsung dapet akses panel."</p>
+                    </div>
+                    <div class="comment-card">
+                        <div class="comment-user"><div class="user-meta"><div class="user-img">B</div><span class="user-name">Bintang_Fx</span></div><span class="buy-badge">Bot WA</span></div>
+                        <p class="comment-text">"Bot whatsapp responnya kilat ga ada kendala disconnect. Recommended seller pokoknya."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pricing-view" class="card-wrapper">
+        <button class="back-btn" onclick="switchView('pricing-view', 'menu-view')">← Kembali ke Menu</button>
+        <div class="header" style="margin-bottom: 15px;">
+            <div class="brand">
+                <div class="brand-text">
+                    <h1>Hosting Minecraft</h1>
+                    <p>High Performance — AMD EPYC Processor</p>
+                </div>
+            </div>
+        </div>
+        <div class="tab-menu">
+            <button id="btn-shared" class="tab-btn active" onclick="togglePriceCategory('shared')">Shared Hosting</button>
+            <button id="btn-private" class="tab-btn" onclick="togglePriceCategory('private')">Private Hosting / VPS ⭐</button>
+        </div>
+
+        <!-- 🟢 SHARED HOSTING VIEW -->
+        <div id="shared-grid" class="pricing-grid">
+            <div class="package-card">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                <div class="pkg-name">Shared 1 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 6.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 1 GB</li>
+                    <li>CPU: 1 Core</li>
+                    <li>Uptime mencapai 99,9%</li>
+                    <li>Sistem anti lag & anti overload</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#2ecc71; color:#2ecc71;" onclick="promptOrder('Shared 1 GB', 6000)">Click</button>
+            </div>
+            <div class="package-card">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                <div class="pkg-name">Shared 2 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 12.500<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 2 GB</li>
+                    <li>CPU: 1-2 Core</li>
+                    <li>Uptime mencapai 99,9%</li>
+                    <li>Backup otomatis min 2x sebulan</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#2ecc71; color:#2ecc71;" onclick="promptOrder('Shared 2 GB', 12500)">Click</button>
+            </div>
+            <div class="package-card">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                <div class="pkg-name">Shared 3 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 19.500<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 3 GB</li>
+                    <li>CPU: 2 Core</li>
+                    <li>Uptime mencapai 99,9%</li>
+                    <li>Mendukung plugin & mod</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#2ecc71; color:#2ecc71;" onclick="promptOrder('Shared 3 GB', 19500)">Click</button>
+            </div>
+            <div class="package-card">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                <div class="pkg-name">Shared 4 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 28.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 4 GB</li>
+                    <li>CPU: 2 Core</li>
+                    <li>Uptime mencapai 99,9%</li>
+                    <li>Sistem anti lag & anti overload</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#2ecc71; color:#2ecc71;" onclick="promptOrder('Shared 4 GB', 28000)">Click</button>
+            </div>
+            <div class="package-card">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                <div class="pkg-name">Shared 5 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 38.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 5 GB</li>
+                    <li>CPU: 2-3 Core</li>
+                    <li>Uptime mencapai 99,9%</li>
+                    <li>Prosesor AMD EPYC Performa Tinggi</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#2ecc71; color:#2ecc71;" onclick="promptOrder('Shared 5 GB', 38000)">Click</button>
+            </div>
+            <div class="package-card">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                <div class="pkg-name">Shared 6 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 50.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 6 GB</li>
+                    <li>CPU: 3 Core</li>
+                    <li>Uptime mencapai 99,9%</li>
+                    <li>Mendukung plugin & mod</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#2ecc71; color:#2ecc71;" onclick="promptOrder('Shared 6 GB', 50000)">Click</button>
+            </div>
+            <div class="package-card">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                <div class="pkg-name">Shared 7 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 63.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 7 GB Dedicated</li>
+                    <li>CPU: 3 Core</li>
+                    <li>Uptime mencapai 99,9%</li>
+                    <li>Sistem anti lag & anti overload</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#2ecc71; color:#2ecc71;" onclick="promptOrder('Shared 7 GB', 63000)">Click</button>
+            </div>
+            <div class="package-card">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                <div class="pkg-name">Shared 8 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 77.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 8 GB</li>
+                    <li>CPU: 3-4 Core</li>
+                    <li>Uptime mencapai 99,9%</li>
+                    <li>Backup otomatis min 2x sebulan</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#2ecc71; color:#2ecc71;" onclick="promptOrder('Shared 8 GB', 77000)">Click</button>
+            </div>
+            <div class="package-card">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                <div class="pkg-name">Shared 9 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 92.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 9 GB</li>
+                    <li>CPU: 4 Core</li>
+                    <li>Uptime mencapai 99,9%</li>
+                    <li>Prosesor AMD EPYC Performa Tinggi</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#2ecc71; color:#2ecc71;" onclick="promptOrder('Shared 9 GB', 92000)">Click</button>
+            </div>
+            <div class="package-card">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available"><span class="dot"></span> Stock</div>
+                <div class="pkg-name">Shared 10 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 110.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 10 GB</li>
+                    <li>CPU: 4 Core</li>
+                    <li>Uptime mencapai 99,9%</li>
+                    <li>Mendukung plugin & mod</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#2ecc71; color:#2ecc71;" onclick="promptOrder('Shared 10 GB', 110000)">Click</button>
+            </div>
+        </div>
+
+        <!-- 🔵 PRIVATE HOSTING / VPS VIEW -->
+        <div id="private-grid" class="pricing-grid" style="display: none;">
+            <div class="package-card" style="border-color: rgba(155, 89, 182, 0.2);">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available" style="background:rgba(155, 89, 182, 0.1); color:#9b59b6;"><span class="dot" style="background:#9b59b6;"></span> Dedicated</div>
+                <div class="pkg-name" style="color:#9b59b6;">Private 1 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 40.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 1 GB Dedicated</li>
+                    <li>CPU: 1-2 Core</li>
+                    <li>Uptime mencapai 99,99%</li>
+                    <li>Sumber daya penuh murni</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#9b59b6; color:#9b59b6;" onclick="promptOrder('Private 1 GB', 40000)">Click</button>
+            </div>
+            <div class="package-card" style="border-color: rgba(155, 89, 182, 0.2);">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available" style="background:rgba(155, 89, 182, 0.1); color:#9b59b6;"><span class="dot" style="background:#9b59b6;"></span> Dedicated</div>
+                <div class="pkg-name" style="color:#9b59b6;">Private 2 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 65.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 2 GB Dedicated</li>
+                    <li>CPU: 1-2 Core</li>
+                    <li>Uptime mencapai 99,99%</li>
+                    <li>Berjalan stabil 24 jam nonstop</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#9b59b6; color:#9b59b6;" onclick="promptOrder('Private 2 GB', 65000)">Click</button>
+            </div>
+            <div class="package-card" style="border-color: rgba(155, 89, 182, 0.2);">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available" style="background:rgba(155, 89, 182, 0.1); color:#9b59b6;"><span class="dot" style="background:#9b59b6;"></span> Dedicated</div>
+                <div class="pkg-name" style="color:#9b59b6;">Private 3 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 95.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 3 GB Dedicated</li>
+                    <li>CPU: 2 Core</li>
+                    <li>Uptime mencapai 99,99%</li>
+                    <li>Akses penuh file & konfigurasi</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#9b59b6; color:#9b59b6;" onclick="promptOrder('Private 3 GB', 95000)">Click</button>
+            </div>
+            <div class="package-card" style="border-color: rgba(155, 89, 182, 0.2);">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available" style="background:rgba(155, 89, 182, 0.1); color:#9b59b6;"><span class="dot" style="background:#9b59b6;"></span> Dedicated</div>
+                <div class="pkg-name" style="color:#9b59b6;">Private 4 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 130.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 4 GB Dedicated</li>
+                    <li>CPU: 2-3 Core</li>
+                    <li>Uptime mencapai 99,99%</li>
+                    <li>AMD EPYC Kelas Atas</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#9b59b6; color:#9b59b6;" onclick="promptOrder('Private 4 GB', 130000)">Click</button>
+            </div>
+            <div class="package-card" style="border-color: rgba(155, 89, 182, 0.2);">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available" style="background:rgba(155, 89, 182, 0.1); color:#9b59b6;"><span class="dot" style="background:#9b59b6;"></span> Dedicated</div>
+                <div class="pkg-name" style="color:#9b59b6;">Private 5 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 165.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 5 GB Dedicated</li>
+                    <li>CPU: 3 Core</li>
+                    <li>Uptime mencapai 99,99%</li>
+                    <li>Backup otomatis min 2x sebulan</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#9b59b6; color:#9b59b6;" onclick="promptOrder('Private 5 GB', 165000)">Click</button>
+            </div>
+            <div class="package-card" style="border-color: rgba(155, 89, 182, 0.2);">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available" style="background:rgba(155, 89, 182, 0.1); color:#9b59b6;"><span class="dot" style="background:#9b59b6;"></span> Dedicated</div>
+                <div class="pkg-name" style="color:#9b59b6;">Private 6 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 205.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 6 GB Dedicated</li>
+                    <li>CPU: 3-4 Core</li>
+                    <li>Uptime mencapai 99,99%</li>
+                    <li>Sumber daya penuh murni</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#9b59b6; color:#9b59b6;" onclick="promptOrder('Private 6 GB', 205000)">Click</button>
+            </div>
+            <div class="package-card" style="border-color: rgba(155, 89, 182, 0.2);">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available" style="background:rgba(155, 89, 182, 0.1); color:#9b59b6;"><span class="dot" style="background:#9b59b6;"></span> Dedicated</div>
+                <div class="pkg-name" style="color:#9b59b6;">Private 7 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 245.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 7 GB Dedicated</li>
+                    <li>CPU: 4 Core</li>
+                    <li>Uptime mencapai 99,99%</li>
+                    <li>Berjalan stabil 24 jam nonstop</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#9b59b6; color:#9b59b6;" onclick="promptOrder('Private 7 GB', 245000)">Click</button>
+            </div>
+            <div class="package-card" style="border-color: rgba(155, 89, 182, 0.2);">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available" style="background:rgba(155, 89, 182, 0.1); color:#9b59b6;"><span class="dot" style="background:#9b59b6;"></span> Dedicated</div>
+                <div class="pkg-name" style="color:#9b59b6;">Private 8 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 290.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 8 GB Dedicated</li>
+                    <li>CPU: 4 Core</li>
+                    <li>Uptime mencapai 99,99%</li>
+                    <li>Akses penuh file & konfigurasi</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#9b59b6; color:#9b59b6;" onclick="promptOrder('Private 8 GB', 290000)">Click</button>
+            </div>
+            <div class="package-card" style="border-color: rgba(155, 89, 182, 0.2);">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available" style="background:rgba(155, 89, 182, 0.1); color:#9b59b6;"><span class="dot" style="background:#9b59b6;"></span> Dedicated</div>
+                <div class="pkg-name" style="color:#9b59b6;">Private 9 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 340.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 9 GB Dedicated</li>
+                    <li>CPU: 4-5 Core</li>
+                    <li>Uptime mencapai 99,99%</li>
+                    <li>AMD EPYC Kelas Atas</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#9b59b6; color:#9b59b6;" onclick="promptOrder('Private 9 GB', 340000)">Click</button>
+            </div>
+            <div class="package-card" style="border-color: rgba(155, 89, 182, 0.2);">
+                <img src="https://cdn.phototourl.com/free/2026-06-06-83cb9d32-d819-4d92-8dfd-48568ee23adc.jpg" class="pkg-banner" alt="Banner">
+                <div class="stock-badge stock-available" style="background:rgba(155, 89, 182, 0.1); color:#9b59b6;"><span class="dot" style="background:#9b59b6;"></span> Dedicated</div>
+                <div class="pkg-name" style="color:#9b59b6;">Private 10 GB</div>
+                <div class="pkg-region">SINGAPUR | AMD EPYC</div>
+                <div class="pkg-price">Rp 395.000<span style="font-size:11px; color:#8a8d98;">/bln</span></div>
+                <ul class="pkg-specs">
+                    <li>RAM: 10 GB Dedicated</li>
+                    <li>CPU: 5 Core</li>
+                    <li>Uptime mencapai 99,99%</li>
+                    <li>Berjalan stabil 24 jam nonstop</li>
+                </ul>
+                <button class="btn-deploy" style="width:100%; margin-top:15px; border-color:#9b59b6; color:#9b59b6;" onclick="promptOrder('Private 10 GB', 395000)">Click</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function formatRupiah(angka) {
+        return "Rp " + angka.toLocaleString('id-ID');
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('menu-view').style.display = 'block';
+        document.getElementById('menu-view').style.opacity = '1';
+    });
+
+    // CUSTOM MODAL CONTROLLER
+    function showModal(title, desc, type, onConfirm = null, showInput = false, isOrderSuccess = false) {
+        const modal = document.getElementById('nexus-modal');
+        const mIcon = document.getElementById('modal-icon');
+        const mTitle = document.getElementById('modal-title');
+        const mDesc = document.getElementById('modal-desc');
+        const mActions = document.getElementById('modal-actions');
+
+        if (type === 'success') { mIcon.innerText = '🚀'; mTitle.style.color = '#2ecc71'; }
+        else if (type === 'error') { mIcon.innerText = '⚠️'; mTitle.style.color = '#e74c3c'; }
+        else { mIcon.innerText = 'ℹ️'; mTitle.style.color = '#3498db'; }
+
+        mTitle.innerText = title;
+        mDesc.innerText = desc;
+        mActions.innerHTML = '';
+
+        if (showInput) {
+            const inputEmail = document.createElement('input');
+            inputEmail.type = 'email';
+            inputEmail.id = 'modalEmailField';
+            inputEmail.className = 'modal-input';
+            inputEmail.placeholder = 'Masukkan alamat gmail kamu...';
+            mDesc.appendChild(inputEmail);
+        }
+
+        // KONDISI KHUSUS: MENAMPILKAN TOMBOL DENGAN LOGO GAMBAR ASLI (KECIL)
+        if (isOrderSuccess) {
+            const dcLink = document.createElement('a');
+            dcLink.className = 'btn-modal-platform btn-modal-dc';
+            dcLink.href = 'https://discord.gg/pbd52NFSmS';
+            dcLink.target = '_blank';
+            dcLink.innerHTML = `<img src="https://cdn.phototourl.com/free/2026-06-06-bb952d1a-21cf-457c-8457-37dc660b5574.jpg" alt="DC"> Klaim di Discord`;
+            dcLink.onclick = closeModal;
+
+            const waLink = document.createElement('a');
+            waLink.className = 'btn-modal-platform btn-modal-wa';
+            waLink.href = 'https://wa.me/628976497354';
+            waLink.target = '_blank';
+            waLink.innerHTML = `<img src="https://cdn.phototourl.com/free/2026-06-06-dcd1a19e-9eda-449e-a659-47a49d6e565b.jpg" alt="WA"> Klaim di WhatsApp`;
+            waLink.onclick = closeModal;
+
+            mActions.appendChild(dcLink);
+            mActions.appendChild(waLink);
+        } 
+        // KONDISI FORM INPUT EMAIL
+        else if (onConfirm) {
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'btn-modal-close';
+            cancelBtn.innerText = 'Batal';
+            cancelBtn.onclick = closeModal;
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = 'btn-modal-confirm';
+            confirmBtn.innerText = 'Konfirmasi';
+            confirmBtn.onclick = () => { 
+                if (showInput) {
+                    const emailVal = document.getElementById('modalEmailField').value.trim();
+                    if (!emailVal || !emailVal.includes('@')) {
+                        alert('Silakan masukkan email valid!');
+                        return;
+                    }
+                    onConfirm(emailVal);
+                } else {
+                    onConfirm();
+                }
+                closeModal(); 
+            };
+
+            mActions.appendChild(cancelBtn);
+            mActions.appendChild(confirmBtn);
+        } 
+        // MODAL INFORMASI UMUM/STANDAR
+        else {
+            const okBtn = document.createElement('button');
+            okBtn.className = 'btn-modal-confirm';
+            okBtn.innerText = 'Mengerti';
+            okBtn.onclick = closeModal;
+            mActions.appendChild(okBtn);
+        }
+        modal.classList.add('active');
+    }
+
+    function closeModal() { document.getElementById('nexus-modal').classList.remove('active'); }
+
+    // VIEW SWITCHER
+    function switchView(fromId, toId) {
+        const fromView = document.getElementById(fromId);
+        const toView = document.getElementById(toId);
+        if (fromView && toView) {
+            fromView.style.opacity = '0';
+            setTimeout(() => {
+                fromView.style.display = 'none';
+                toView.style.display = 'block';
+                setTimeout(() => {
+                    toView.style.opacity = '1';
+                    if (toId === 'pricing-view') triggerPackageReveal();
+                }, 50);
+            }, 300);
+        }
+    }
+
+    function triggerPackageReveal() {
+        const activeGrid = document.querySelector('.pricing-grid:not([style*="display: none"])');
+        if (!activeGrid) return;
+        const cards = activeGrid.querySelectorAll('.package-card');
+        document.querySelectorAll('.package-card').forEach(card => card.classList.remove('reveal'));
+        cards.forEach((card, index) => { setTimeout(() => { card.classList.add('reveal'); }, index * 50); });
+    }
+
+    function togglePriceCategory(category) {
+        const sharedGrid = document.getElementById('shared-grid');
+        const privateGrid = document.getElementById('private-grid');
+        const btnShared = document.getElementById('btn-shared');
+        const btnPrivate = document.getElementById('btn-private');
+
+        if (category === 'shared') {
+            sharedGrid.style.display = 'grid'; privateGrid.style.display = 'none';
+            btnShared.classList.add('active'); btnPrivate.classList.remove('active');
+        } else {
+            sharedGrid.style.display = 'none'; privateGrid.style.display = 'grid';
+            btnShared.classList.remove('active'); btnPrivate.classList.add('active');
+        }
+        triggerPackageReveal();
+    }
+
+    // MEMINTA INPUT EMAIL DAN PEMROSESAN ORDER
+    function promptOrder(packageName, price) {
+        showModal(
+            'KONFIRMASI PEMBELIAN', 
+            `Anda memilih "${packageName}" seharga ${formatRupiah(price)}/bulan.\nUntuk pengiriman invoice otomatis, masukkan alamat email Anda di bawah ini:`, 
+            'info', 
+            (inputEmail) => {
+                orderPackage(packageName, price, inputEmail);
+            }, 
+            true
+        );
+    }
+
+    function orderPackage(packageName, price, buyerEmail) {
+        let randomId = Math.floor(1000 + Math.random() * 9000);
+        let ipAddress = `147.139.${Math.floor(Math.random()*254)}.${Math.floor(Math.random()*254)}:25565`;
+
+        // 1. SYSTEM EMAIL TRIGGER OTOMATIS KE EMAIL USER (FORMSPREE)
+        const emailForm = new FormData();
+        emailForm.append('_replyto', 'empressstoreee@gmail.com'); 
+        emailForm.append('Sender', 'empressstoreee@gmail.com');
+        emailForm.append('Penerima / Buyer Email', buyerEmail);
+        emailForm.append('Subjek', 'Terima Kasih Telah Memesan Layanan di Khalglens Nexus!');
+        emailForm.append('Isi Pesan', `Halo!\n\nKami dari Empress Store ingin mengucapkan terima kasih banyak telah memesan paket [ ${packageName} ] di Khalglens Nexus.\n\nDetail Transaksi Anda:\n- ID Server: #${randomId}\n- IP Node Alokasi: ${ipAddress}\n- Total Harga: ${formatRupiah(price)}/bln\n\nSilakan bawa nota salinan invoice di bawah ini dan kirimkan ke ticket Discord untuk klaim setup panel server Pterodactyl Anda.\n\nSalam Hangat,\nEmpress Store Developer Team.`);
+
+        fetch('https://formspree.io/f/xnqeozny', {
+            method: 'POST',
+            body: emailForm,
+            headers: { 'Accept': 'application/json' }
+        }).catch(e => console.log('Email processing complete.'));
+
+        // 2. FORMAT UNTUK DISCORD TICKET USER / WHATSAPP ADMIN
+        const textToCopy = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🛒 ORDER BARU DI KHALGLENS NEXUS 🛒
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+● Nama Paket : ${packageName}
+● Server ID  : #${randomId}
+● IP Node    : ${ipAddress}
+● Harga      : ${formatRupiah(price)}/bulan
+● Email Buyer: ${buyerEmail}
+● Status     : Menunggu Pembuatan Akun Panel
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ Tolong proses pembuatan akun panel saya melalui platform ini! Terima kasih.`;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            showModal(
+                '🚀 ORDER BERHASIL & INVOICE DIKIRIM!', 
+                `Pesanan berhasil diproses!\n\n` +
+                `✉️ Struk transaksi telah dikirimkan ke email Anda (${buyerEmail}) dari empressstoreee@gmail.com.\n\n` +
+                `👉 Data invoice order sudah tersalin otomatis ke clipboard ponsel/PC Anda!\n\n` +
+                `Silakan pilih platform komunitas di bawah ini untuk mengirimkan bukti invoice tadi kepada admin:`, 
+                'success',
+                null,
+                false,
+                true
+            );
+        }).catch(err => {
+            showModal(
+                '🚀 ORDER BERHASIL!', 
+                `Pesanan dibuat. Email terkirim ke ${buyerEmail}.\n\nGagal menyalin otomatis, silakan salin manual data ini:\n\n${textToCopy}`, 
+                'success',
+                null,
+                false,
+                true
+            );
+        });
+    }
+</script>
+
+</body>
+</html>
